@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kakao.cardpayment.cardMapper">
+
+	<select id="getCardPaymentList" parameterType="com.kakao.cardpayment.form.CardForm" resultType="com.kakao.cardpayment.dto.CardDto">
+		SELECT
+		CARD_NO
+		, CARD_VDATE
+		, CARD_CVCNO
+		, IF(PAY_STCD='00','정상','취소') as PAY_STCD
+		, CASE WHEN PAY_MON='00'
+               THEN '일시불'
+               WHEN PAY_MON='02'
+               THEN '2개월'
+               WHEN PAY_MON='03'
+               THEN '3개월'
+               WHEN PAY_MON='04'
+               THEN '4개월'
+               WHEN PAY_MON='05'
+               THEN '5개월'
+               WHEN PAY_MON='06'
+               THEN '6개월'
+               WHEN PAY_MON='07'
+               THEN '7개월'
+               WHEN PAY_MON='08'
+               THEN '8개월'
+               WHEN PAY_MON='09'
+               THEN '9개월'
+               WHEN PAY_MON='10'
+               THEN '10개월'
+                WHEN PAY_MON='11'
+               THEN '11개월'
+               ELSE '12개월'
+               END PAY_MON
+		, PAYMENT
+		, VAT_PAYMENT
+		, MANAGE_NO
+		, CARD_AES
+		, ETC
+		, INPUT_DATE
+		, MODIFY_DATE
+		FROM CARDPAYMENTS.CARDPAY
+		WHERE CARD_NO = #{card_no}
+	</select>
+	<select id="insertCardPayment" parameterType="com.kakao.cardpayment.form.CardForm" >
+		INSERT INTO CARDPAYMENTS.CARDPAY
+		(CARD_NO
+		,CARD_VDATE
+		,CARD_CVCNO
+		,PAY_STCD
+		,PAY_MON
+		,PAYMENT
+		,VAT_PAYMENT
+		,MANAGE_NO
+		,CARD_AES
+		,ETC
+		,INPUT_DATE
+		,MODIFY_DATE)
+		VALUES
+		(
+		#{card_no}
+		,#{card_vdate}
+		,#{card_cvcno}
+		,#{pay_stcd}
+		,#{pay_mon}
+		,#{payment}
+		,#{vat_payment}
+		,#{manage_no}
+		,#{card_aes}
+		,#{etc}
+		,NOW()
+		,NOW()
+		)
+	</select>
+	<select id="modifyCardPayment" parameterType="com.kakao.cardpayment.form.CardForm" resultType="com.kakao.cardpayment.dto.CardDto">
+	UPDATE CARDPAYMENTS.CARDPAY
+	SET PAY_STCD    = #{pay_stcd}
+	, MANAGE_NO    = #{manage_no}
+	, MODIFY_DATE = NOW()
+	WHERE CARD_NO = #{card_no}
+	</select>
+	<select id="deleteCardPayment" parameterType="com.kakao.cardpayment.form.CardForm" resultType="com.kakao.cardpayment.dto.CardDto">
+	DELETE FROM CARDPAYMENTS.CARDPAY WHERE CARD_NO = #{card_no}
+	</select>
+</mapper>
